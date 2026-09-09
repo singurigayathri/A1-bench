@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A1 by market</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ground:#eef1f4;--card:#fff;--ink:#12161b;--ink2:#5c666f;--ink3:#8b959d;--rule:#dde2e7;
+ --ahead:#146c8f;--behind:#b5432c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:"IBM Plex Sans",system-ui,sans-serif;
+ font-size:14px;line-height:1.55;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1060px;margin:0 auto;padding:30px 22px 60px}
+h1{font-size:23px;font-weight:600;margin:0;letter-spacing:-.01em}
+.sub{color:var(--ink2);margin:5px 0 0;max-width:62ch}
+.tabs{display:flex;gap:7px;flex-wrap:wrap;margin:22px 0 0}
+.tab{font:inherit;font-size:13.5px;padding:9px 15px;border:1px solid var(--rule);background:var(--card);
+ border-radius:7px;cursor:pointer;color:var(--ink2);display:flex;align-items:center;gap:7px}
+.tab[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#fff;font-weight:500}
+.tab:focus-visible{outline:2px solid var(--ahead);outline-offset:2px}
+.dot{width:7px;height:7px;border-radius:50%;flex:none}
+.card{background:var(--card);border:1px solid var(--rule);border-radius:10px;margin-top:16px;padding:20px}
+h2{font-size:17px;font-weight:600;margin:0}
+.vs{color:var(--ink2);font-size:13.5px;margin:3px 0 0}
+.period{float:right}
+select{font:inherit;padding:6px 9px;border:1px solid var(--rule);border-radius:6px;background:var(--card);color:var(--ink)}
+table{border-collapse:collapse;width:100%;margin-top:16px}
+th,td{text-align:right;padding:9px 10px;border-bottom:1px solid var(--rule);font-size:13.5px;white-space:nowrap}
+th{color:var(--ink2);font-weight:500;font-size:12.5px}
+td:first-child,th:first-child{text-align:left;white-space:normal}
+tr.grp td{background:#f4f6f8;font-weight:600;font-size:12px;letter-spacing:.03em;text-transform:uppercase;
+ color:var(--ink2);padding:8px 10px;border-bottom:1px solid var(--rule)}
+td.us{font-weight:600}
+td.gap{font-weight:600}
+.up{color:var(--ahead)} .dn{color:var(--behind)}
+.miss{color:var(--ink3)}
+.flag{display:inline-block;width:15px;height:15px;line-height:15px;text-align:center;border-radius:3px;
+ background:#fbf0ed;color:#8c3722;font-size:10px;margin-left:5px;cursor:help;vertical-align:1px}
+.warn{border-left:3px solid var(--behind);background:#fbf0ed;padding:11px 14px;color:#6d2a1b;font-size:13px;margin-top:16px}
+.info{border-left:3px solid var(--ahead);background:#eef4f7;padding:11px 14px;color:#0d4a63;font-size:13px;margin-top:16px}
+.srcs{margin-top:18px;font-size:12.5px;color:var(--ink2)}
+.srcs a{color:var(--ahead)}
+.srcs div{margin-top:5px}
+footer{color:var(--ink3);font-size:12.5px;margin-top:24px}
+@media(max-width:640px){.wrap{padding:18px 11px 44px}h1{font-size:19px}th,td{padding:8px 6px;font-size:12.5px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>A1 by market</h1>
+<p class="sub">Every published figure for A1 and its main competitor, market by market.</p>
+
+<div class="tabs" id="tabs" role="group" aria-label="Choose market"></div>
+<div id="panel"></div>
+<footer id="foot"></footer>
+</div>
+
+<script>
+let PEERS=null, METRICS=null, ROWS=null, market=null, period="FY2025";
+
+function parseCSV(t){
+  const L=t.trim().split(/\r?\n/), head=L[0].split(",");
+  return L.slice(1).map(line=>{
+    const c=[]; let cur="",q=false;
+    for(const ch of line){ if(ch==='"'){q=!q;} else if(ch===","&&!q){c.push(cur);cur="";} else cur+=ch; }
+    c.push(cur); const o={}; head.forEach((h,i)=>o[h.trim()]=(c[i]||"").trim()); return o;
+  });
+}
+
+const fmt=(v,u)=>{
+  if(v===null||v===undefined||v==="") return null;
+  const n=parseFloat(v);
+  if(u==="eur_mn")    return n.toLocaleString("en",{maximumFractionDigits:0});
+  if(u==="thousands") return n.toLocaleString("en",{maximumFractionDigits:0});
+  if(u==="eur_month") return n.toFixed(2);
+  return n.toFixed(1);
+};
+const suffix=u=> u==="pct"||u==="pct_yoy" ? "%" : "";
+
+function val(op,mid){
+  const r=ROWS.find(x=>x.period===period&&x.operator_id===op&&x.metric_id===mid);
+  return r?{v:parseFloat(r.value),note:r.basis_note,basis:r.basis_matches_dictionary,
+            url:r.source_url,src:r.source_type,page:r.source_page}:null;
+}
+
+function render(){
+  const mk=PEERS.markets.find(m=>m.code===market);
+  const us=mk.operators.find(o=>o.is_us);
+  const pp=mk.primary_peer;
+  const peer=pp?mk.operators.find(o=>o.id===pp.id):null;
+
+  const periods=[...new Set(ROWS.filter(r=>r.market===market).map(r=>r.period))].sort().reverse();
+  if(!periods.includes(period)) period=periods[0];
+
+  let rowsHTML="", lastGroup="", anyPeer=false, srcs={};
+  for(const m of METRICS.metrics){
+    if(m.group!==lastGroup){ rowsHTML+=`<tr class="grp"><td colspan="4">${m.group}</td></tr>`; lastGroup=m.group; }
+    const a=val(us.id,m.id), b=peer?val(peer.id,m.id):null;
+    if(!a&&!b) continue;
+    if(b) anyPeer=true;
+    [a,b].forEach(x=>{ if(x&&x.url) srcs[x.url]={src:x.src,page:x.page}; });
+
+    let gap="<span class='miss'>—</span>";
+    if(a&&b){
+      const g=(a.v-b.v)*(m.higher_is_better?1:-1);
+      gap=`<span class="${g>0.05?"up":g<-0.05?"dn":""}">${g>0?"+":""}${g.toFixed(1)}${suffix(m.unit)?" pp":""}</span>`;
+    }
+    const flag=(a&&a.basis!=="yes")||(b&&b.basis!=="yes")
+      ? `<span class="flag" title="${((b&&b.note)||(a&&a.note)||"").replace(/"/g,"&quot;")}">!</span>` : "";
+    rowsHTML+=`<tr>
+      <td title="${m.definition.replace(/"/g,"&quot;")} — ${m.watch_out.replace(/"/g,"&quot;")}">${m.label}${flag}</td>
+      <td class="us">${a?fmt(a.v,m.unit)+suffix(m.unit):"<span class='miss'>—</span>"}</td>
+      <td>${b?fmt(b.v,m.unit)+suffix(m.unit):"<span class='miss'>not published</span>"}</td>
+      <td class="gap">${gap}</td></tr>`;
+  }
+
+  const srcHTML=Object.entries(srcs).map(([u,v])=>
+    `<div><a href="${u}" target="_blank" rel="noopener">${v.src}</a>${v.page?" — "+v.page:""}</div>`).join("");
+
+  document.getElementById("panel").innerHTML=`
+    <div class="card">
+      <div class="period"><select id="per">${periods.map(p=>`<option ${p===period?"selected":""}>${p.replace("_"," ")}</option>`).join("")}</select></div>
+      <h2>${mk.name}</h2>
+      <p class="vs">${us.name} vs ${peer?peer.name:"no peer identified"}${pp?` — ${pp.note}`:""}</p>
+      <table>
+        <thead><tr><th>Metric</th><th>${us.name}</th><th>${peer?peer.name:"Competitor"}</th><th>Gap</th></tr></thead>
+        <tbody>${rowsHTML}</tbody>
+      </table>
+      ${anyPeer?"":(()=>{
+        const dr=pp&&pp.data_route;
+        if(!dr) return `<div class="warn">No competitor figures yet for ${mk.name}.</div>`;
+        const cls=dr.status==="not obtainable"?"warn":"info";
+        return `<div class="${cls}"><strong>No competitor figures yet — ${dr.status}${dr.effort!=="—"?", roughly "+dr.effort:""}</strong>
+          <div style="margin-top:6px">${dr.where}</div>
+          <div style="margin-top:6px;opacity:.85">Watch out: ${dr.watch}</div></div>`;})()}
+      ${market==="AT"&&anyPeer?`<div class="info">Compare the <strong>like-for-like</strong> margin against Magenta, not the reported one. Magenta's figure is adjusted; A1's carries EUR 96mn of restructuring plus low-margin transit revenue.</div>`:""}
+      ${anyPeer&&pp&&pp.data_route&&(pp.data_route.status==="partial")?`<div class="info"><strong>Partial data — roughly ${pp.data_route.effort} to complete</strong><div style="margin-top:6px">${pp.data_route.where}</div><div style="margin-top:6px;opacity:.85">Watch out: ${pp.data_route.watch}</div></div>`:""}
+      ${market==="HR"&&anyPeer?`<div class="info">Capex intensity is scored lower-is-better, so A1 shows green. HT spends 23.8% of revenue against A1's 13.5% and passed one million FTTH homes. That is HT buying market share, not inefficiency.</div>`:""}
+      ${srcHTML?`<div class="srcs"><strong style="color:var(--ink)">Sources</strong>${srcHTML}</div>`:""}
+    </div>`;
+  const sel=document.getElementById("per");
+  if(sel) sel.onchange=e=>{period=e.target.value.replace(" ","_");render();};
+}
+
+function tabs(){
+  document.getElementById("tabs").innerHTML=PEERS.markets.map(m=>{
+    const has=ROWS.some(r=>r.market===m.code&&!r.operator_id.startsWith("a1-"));
+    return `<button class="tab" data-mk="${m.code}" aria-pressed="${m.code===market}">
+      <span class="dot" style="background:${has?"#146c8f":"#c9d0d6"}"></span>${m.name}</button>`;
+  }).join("");
+  document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{market=b.dataset.mk;tabs();render();});
+}
+
+(async()=>{
+  try{
+    const [p,m,c]=await Promise.all([
+      fetch("./data/peers.json").then(r=>r.json()),
+      fetch("./data/metrics.json").then(r=>r.json()),
+      fetch("./data/data.sample.csv").then(r=>r.text())]);
+    PEERS=p; METRICS=m; ROWS=parseCSV(c);
+  }catch(e){
+    document.querySelector(".wrap").insertAdjacentHTML("afterbegin",
+      "<div class='warn'>Could not load the data files. Open this page through your GitHub Pages address, not from your hard drive.</div>");
+    return;
+  }
+  market=PEERS.markets[0].code;
+  const withPeer=PEERS.markets.filter(m=>ROWS.some(r=>r.market===m.code&&!r.operator_id.startsWith("a1-")));
+  document.getElementById("foot").textContent=
+    `${ROWS.length} published figures. ${withPeer.length} of ${PEERS.markets.length} markets have competitor data: `
+    + withPeer.map(m=>m.name).join(", ") + ". A blue dot on a tab means competitor data is loaded.";
+  tabs(); render();
+})();
+</script>
+</body>
+</html>
