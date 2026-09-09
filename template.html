@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A1 competitive position</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ground:#eef1f4; --card:#ffffff; --ink:#12161b; --ink2:#5c666f; --ink3:#8b959d;
+  --rule:#dde2e7; --ahead:#146c8f; --behind:#b5432c; --flat:#aeb8c0;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);
+  font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:14px;line-height:1.5;
+  font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding:32px 24px 64px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;gap:20px;justify-content:space-between;margin-bottom:6px}
+h1{font-size:23px;font-weight:600;margin:0;letter-spacing:-.01em}
+.sub{color:var(--ink2);margin:4px 0 0;max-width:62ch}
+.controls{display:flex;gap:10px;align-items:center}
+select{font:inherit;padding:7px 10px;border:1px solid var(--rule);border-radius:6px;background:var(--card);color:var(--ink)}
+.banner{margin:20px 0 0;padding:10px 14px;border-left:3px solid var(--behind);background:#fbf0ed;color:#6d2a1b;border-radius:0}
+.card{background:var(--card);border:1px solid var(--rule);border-radius:10px;margin-top:20px;overflow:hidden}
+.card h2{font-size:15px;font-weight:600;margin:0;padding:16px 20px 0}
+.card p.note{color:var(--ink2);margin:4px 20px 0;font-size:13px;max-width:70ch}
+.scroll{overflow-x:auto;padding:14px 20px 20px}
+table{border-collapse:collapse;width:100%}
+th,td{text-align:right;padding:0;white-space:nowrap}
+thead th{font-size:11.5px;font-weight:500;color:var(--ink2);padding:0 6px 10px;vertical-align:bottom;line-height:1.25}
+thead th div{width:64px;white-space:normal}
+th.rowhead,td.rowhead{text-align:left;font-weight:500;padding-right:16px;position:sticky;left:0;background:var(--card)}
+tbody tr{cursor:pointer}
+tbody tr:hover td.rowhead{color:var(--ahead)}
+tbody tr.on td.rowhead{color:var(--ahead)}
+td.cell{padding:3px}
+.chip{display:block;border-radius:5px;padding:9px 6px;font-size:13px;font-weight:500;text-align:center}
+.rank{display:block;font-size:10.5px;font-weight:400;opacity:.75;margin-top:1px}
+.legend{display:flex;gap:18px;align-items:center;flex-wrap:wrap;color:var(--ink2);font-size:12.5px;padding:0 20px 4px}
+.sw{display:inline-block;width:26px;height:11px;border-radius:3px;vertical-align:-1px;margin-right:6px}
+.detail table{margin-top:2px}
+.detail th,.detail td{text-align:right;padding:8px 10px;border-bottom:1px solid var(--rule);font-size:13px}
+.detail th{color:var(--ink2);font-weight:500}
+.detail td:first-child,.detail th:first-child{text-align:left}
+.tag{display:inline-block;font-size:11px;padding:1px 7px;border-radius:20px;border:1px solid var(--rule);color:var(--ink2);margin-left:6px}
+.tag.warn{border-color:#e0b6ab;background:#fbf0ed;color:#8c3722}
+.us{font-weight:600}
+footer{color:var(--ink3);font-size:12.5px;margin-top:28px;max-width:75ch}
+@media(max-width:640px){.wrap{padding:20px 12px 48px}h1{font-size:19px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div>
+    <h1>A1 competitive position</h1>
+    <p class="sub">Gap to the strongest competitor in each market. Positive means A1 leads.</p>
+  </div>
+  <div class="controls">
+    <label for="q" style="color:var(--ink2);font-size:13px">Quarter</label>
+    <select id="q"></select>
+  </div>
+</header>
+
+<div class="banner">Every figure below is illustrative placeholder data, not A1 or competitor results. Replace <code>data/data.sample.csv</code> with real entries before showing this to anyone.</div>
+
+<div class="card">
+  <h2>Where A1 leads and where it trails</h2>
+  <p class="note">Each cell compares A1 against the best-performing competitor in that market. Select a row for the operator-level detail.</p>
+  <div class="legend">
+    <span><span class="sw" style="background:var(--ahead)"></span>A1 ahead</span>
+    <span><span class="sw" style="background:#e6eaed"></span>level</span>
+    <span><span class="sw" style="background:var(--behind)"></span>A1 behind</span>
+    <span style="color:var(--ink3)">Small figure = A1 rank in market</span>
+  </div>
+  <div class="scroll"><table id="matrix"></table></div>
+</div>
+
+<div class="card detail" id="detailCard" hidden>
+  <h2 id="detailTitle"></h2>
+  <p class="note" id="detailNote"></p>
+  <div class="scroll"><table id="detail"></table></div>
+</div>
+
+<footer id="foot"></footer>
+</div>
+
+<script>
+const DATA = /*__DATA__*/null;
+
+const METRICS = DATA.metrics.metrics;
+const MARKETS = DATA.peers.markets;
+const ROWS = DATA.rows.map(r => ({...r, value: parseFloat(r.value)}));
+const QUARTERS = [...new Set(ROWS.map(r => r.quarter))].sort();
+const MET = Object.fromEntries(METRICS.map(m => [m.id, m]));
+const OPS = Object.fromEntries(MARKETS.flatMap(mk => mk.operators.map(o => [o.id, {...o, market: mk.code}])));
+const SHOWN = METRICS.filter(m => !m.group_level_only);
+
+const fmt = (v, m) => {
+  if (v === null || v === undefined || Number.isNaN(v)) return "n/a";
+  const d = (m.unit === "x" || m.unit === "pct_month" || m.unit === "eur_month") ? 2 : 1;
+  return v.toFixed(d);
+};
+const signed = (v, m) => (v > 0 ? "+" : "") + fmt(v, m);
+
+function cellsFor(quarter) {
+  const out = {};
+  for (const mk of MARKETS) {
+    out[mk.code] = {};
+    for (const m of SHOWN) {
+      const vals = mk.operators.map(o => {
+        const r = ROWS.find(x => x.quarter === quarter && x.operator_id === o.id && x.metric_id === m.id);
+        return r ? {op: o, value: r.value, basis: r.basis_matches_dictionary, note: r.basis_note} : null;
+      }).filter(Boolean);
+      const us = vals.find(v => v.op.is_us);
+      const peers = vals.filter(v => !v.op.is_us);
+      if (!us || !peers.length) { out[mk.code][m.id] = null; continue; }
+      const best = peers.reduce((a, b) =>
+        (m.higher_is_better ? b.value > a.value : b.value < a.value) ? b : a);
+      const gap = (us.value - best.value) * (m.higher_is_better ? 1 : -1);
+      const sorted = [...vals].sort((a, b) => m.higher_is_better ? b.value - a.value : a.value - b.value);
+      out[mk.code][m.id] = {
+        gap, us, best, rank: sorted.findIndex(v => v.op.is_us) + 1, n: vals.length,
+        rows: sorted, shaky: vals.some(v => v.basis !== "yes")
+      };
+    }
+  }
+  return out;
+}
+
+function colour(gap, scale) {
+  const t = Math.max(-1, Math.min(1, gap / (scale || 1)));
+  const a = Math.abs(t);
+  if (a < 0.12) return {bg: "#e6eaed", fg: "#4d5762"};
+  const mix = 0.16 + a * 0.74;
+  const base = t > 0 ? [20, 108, 143] : [181, 67, 44];
+  const bg = base.map(c => Math.round(255 - (255 - c) * mix));
+  return {bg: `rgb(${bg.join(",")})`, fg: mix > 0.55 ? "#fff" : (t > 0 ? "#0d4a63" : "#7a2c1c")};
+}
+
+let quarter = QUARTERS[QUARTERS.length - 1];
+let openMarket = null;
+
+function render() {
+  const cells = cellsFor(quarter);
+  const scale = {};
+  for (const m of SHOWN) {
+    const gaps = MARKETS.map(mk => cells[mk.code][m.id]).filter(Boolean).map(c => Math.abs(c.gap));
+    scale[m.id] = Math.max(...gaps, 0.001);
+  }
+
+  let h = "<thead><tr><th class='rowhead'></th>";
+  for (const m of SHOWN) h += `<th><div title="${m.definition.replace(/"/g,'&quot;')}">${m.label}</div></th>`;
+  h += "</tr></thead><tbody>";
+  for (const mk of MARKETS) {
+    h += `<tr data-mk="${mk.code}" class="${openMarket === mk.code ? "on" : ""}"><td class='rowhead'>${mk.name}</td>`;
+    for (const m of SHOWN) {
+      const c = cells[mk.code][m.id];
+      if (!c) { h += `<td class='cell'><span class='chip' style='background:#f3f5f7;color:#98a2aa'>n/a</span></td>`; continue; }
+      const col = colour(c.gap, scale[m.id]);
+      h += `<td class='cell'><span class='chip' style='background:${col.bg};color:${col.fg}'>${signed(c.gap, m)}<span class='rank'>${c.rank} of ${c.n}</span></span></td>`;
+    }
+    h += "</tr>";
+  }
+  document.getElementById("matrix").innerHTML = h + "</tbody>";
+
+  document.querySelectorAll("#matrix tbody tr").forEach(tr =>
+    tr.onclick = () => { openMarket = tr.dataset.mk === openMarket ? null : tr.dataset.mk; render(); });
+
+  const card = document.getElementById("detailCard");
+  if (!openMarket) { card.hidden = true; return; }
+  card.hidden = false;
+  const mk = MARKETS.find(x => x.code === openMarket);
+  document.getElementById("detailTitle").textContent = `${mk.name} — ${quarter}`;
+  document.getElementById("detailNote").textContent =
+    `Reporting currency ${mk.currency}. Market-share figures should come from ${mk.regulator} for every operator, not from operator disclosures.`;
+
+  let d = "<thead><tr><th>Metric</th>";
+  for (const o of mk.operators) d += `<th class="${o.is_us ? "us" : ""}">${o.name}</th>`;
+  d += "</tr></thead><tbody>";
+  for (const m of SHOWN) {
+    const c = cells[mk.code][m.id];
+    d += `<tr><td>${m.label}${c && c.shaky ? `<span class="tag warn" title="At least one operator's reported basis differs from your definition">basis differs</span>` : ""}</td>`;
+    for (const o of mk.operators) {
+      const r = ROWS.find(x => x.quarter === quarter && x.operator_id === o.id && x.metric_id === m.id);
+      d += `<td class="${o.is_us ? "us" : ""}">${r ? fmt(r.value, m) : "n/a"}</td>`;
+    }
+    d += "</tr>";
+  }
+  document.getElementById("detail").innerHTML = d + "</tbody>";
+}
+
+const sel = document.getElementById("q");
+sel.innerHTML = QUARTERS.map(q => `<option ${q === quarter ? "selected" : ""}>${q}</option>`).join("");
+sel.onchange = e => { quarter = e.target.value; render(); };
+
+document.getElementById("foot").textContent =
+  `${ROWS.length} data points across ${MARKETS.length} markets, ${Object.keys(OPS).length} operators and ${SHOWN.length} metrics. Net debt / EBITDA is defined in metrics.json but hidden here because it is only meaningful at group level.`;
+
+render();
+</script>
+</body>
+</html>

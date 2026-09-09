@@ -1,0 +1,299 @@
+{
+  "_note": "Deutsche Telekom is present in AT, HR and MK ONLY. There is no Magenta in Bulgaria, Serbia, Slovenia or Belarus. Phase 1 = the three DT markets. Phase 2 = each remaining market's number one operator. Market positions are A1's own, by service revenue share, from the Annual Financial Report 2025.",
+  "markets": [
+    {
+      "code": "AT",
+      "name": "Austria",
+      "currency": "EUR",
+      "regulator": "RTR",
+      "regulator_url": "https://www.rtr.at",
+      "operators": [
+        {
+          "id": "a1-at",
+          "name": "A1 Telekom Austria",
+          "is_us": true,
+          "parent": "A1 Telekom Austria Group",
+          "listed": true,
+          "ticker": "TKA.VI",
+          "ticker_confidence": "high",
+          "source_type": "api+ir_pdf",
+          "ir_url": "https://a1.group/investor-relations/"
+        },
+        {
+          "id": "magenta-at",
+          "name": "Magenta Telekom",
+          "parent": "Deutsche Telekom",
+          "listed": false,
+          "parent_ticker": "DTE.DE",
+          "ticker_confidence": "high",
+          "source_type": "parent_factbook",
+          "note": "Country-level figures appear in DT's Europe segment reporting / analyst fact book."
+        },
+        {
+          "id": "drei-at",
+          "name": "Drei (Hutchison Drei Austria)",
+          "parent": "CK Hutchison",
+          "listed": false,
+          "parent_ticker": "0001.HK",
+          "ticker_confidence": "medium",
+          "source_type": "parent_report+regulator",
+          "note": "Austria is not separately disclosed in most quarters. Expect to lean on RTR data."
+        }
+      ],
+      "primary_peer": {
+        "id": "magenta-at",
+        "name": "Magenta Telekom",
+        "parent": "Deutsche Telekom",
+        "phase": "phase1",
+        "note": "A1 is #1 here; Magenta is the challenger"
+      }
+    },
+    {
+      "code": "SI",
+      "name": "Slovenia",
+      "currency": "EUR",
+      "regulator": "AKOS",
+      "regulator_url": "https://www.akos-rs.si",
+      "operators": [
+        {
+          "id": "a1-si",
+          "name": "A1 Slovenija",
+          "is_us": true,
+          "parent": "A1 Telekom Austria Group",
+          "listed": false,
+          "source_type": "parent_ir",
+          "note": "Reported as a segment in A1 Group quarterly results."
+        },
+        {
+          "id": "telekom-si",
+          "name": "Telekom Slovenije",
+          "parent": "Republic of Slovenia (majority)",
+          "listed": true,
+          "ticker": "TLSG.LJ",
+          "ticker_confidence": "medium",
+          "source_type": "api+ir_pdf",
+          "note": "Listed on Ljubljana Stock Exchange. Thin coverage in some APIs - check before relying on it."
+        },
+        {
+          "id": "telemach-si",
+          "name": "Telemach Slovenija",
+          "parent": "United Group",
+          "listed": false,
+          "source_type": "bond_report+regulator",
+          "note": "United Group has listed debt and public credit ratings, so periodic reports exist. Check their IR page."
+        }
+      ],
+      "primary_peer": {
+        "id": "telekom-si",
+        "name": "Telekom Slovenije",
+        "parent": "Republic of Slovenia",
+        "phase": "phase2",
+        "note": "market #1; A1 is #3. Listed on Ljubljana SE"
+      }
+    },
+    {
+      "code": "HR",
+      "name": "Croatia",
+      "currency": "EUR",
+      "regulator": "HAKOM",
+      "regulator_url": "https://www.hakom.hr",
+      "operators": [
+        {
+          "id": "a1-hr",
+          "name": "A1 Hrvatska",
+          "is_us": true,
+          "parent": "A1 Telekom Austria Group",
+          "listed": false,
+          "source_type": "parent_ir"
+        },
+        {
+          "id": "ht-hr",
+          "name": "Hrvatski Telekom",
+          "parent": "Deutsche Telekom",
+          "listed": true,
+          "ticker": "HT.ZA",
+          "ticker_confidence": "medium",
+          "source_type": "api+ir_pdf",
+          "note": "Best data quality of any peer in your footprint - separately listed on Zagreb SE with full quarterly reports including KPIs."
+        },
+        {
+          "id": "telemach-hr",
+          "name": "Telemach Hrvatska",
+          "parent": "United Group",
+          "listed": false,
+          "source_type": "bond_report+regulator"
+        }
+      ],
+      "primary_peer": {
+        "id": "ht-hr",
+        "name": "Hrvatski Telekom",
+        "parent": "Deutsche Telekom",
+        "phase": "phase1",
+        "note": "market #1; separately listed on Zagreb SE - best disclosure of any peer"
+      }
+    },
+    {
+      "code": "RS",
+      "name": "Serbia",
+      "currency": "RSD",
+      "regulator": "RATEL",
+      "regulator_url": "https://www.ratel.rs",
+      "operators": [
+        {
+          "id": "a1-rs",
+          "name": "A1 Srbija",
+          "is_us": true,
+          "parent": "A1 Telekom Austria Group",
+          "listed": false,
+          "source_type": "parent_ir"
+        },
+        {
+          "id": "telekom-rs",
+          "name": "Telekom Srbija",
+          "parent": "Republic of Serbia",
+          "listed": false,
+          "source_type": "bond_report+annual_report",
+          "note": "State-owned with eurobonds outstanding - publishes annual reports and bondholder disclosures."
+        },
+        {
+          "id": "yettel-rs",
+          "name": "Yettel Serbia",
+          "parent": "PPF Telecom Group",
+          "listed": false,
+          "source_type": "bond_report+regulator"
+        },
+        {
+          "id": "sbb-rs",
+          "name": "SBB",
+          "parent": "United Group",
+          "listed": false,
+          "source_type": "bond_report+regulator",
+          "note": "Fixed/cable focused - only comparable on fixed metrics."
+        }
+      ],
+      "primary_peer": {
+        "id": "telekom-rs",
+        "name": "Telekom Srbija",
+        "parent": "Republic of Serbia",
+        "phase": "phase2",
+        "note": "market #1; A1 is #3"
+      }
+    },
+    {
+      "code": "BG",
+      "name": "Bulgaria",
+      "currency": "BGN",
+      "regulator": "CRC",
+      "regulator_url": "https://crc.bg",
+      "operators": [
+        {
+          "id": "a1-bg",
+          "name": "A1 Bulgaria",
+          "is_us": true,
+          "parent": "A1 Telekom Austria Group",
+          "listed": false,
+          "source_type": "parent_ir"
+        },
+        {
+          "id": "vivacom-bg",
+          "name": "Vivacom",
+          "parent": "United Group",
+          "listed": false,
+          "source_type": "bond_report+regulator"
+        },
+        {
+          "id": "yettel-bg",
+          "name": "Yettel Bulgaria",
+          "parent": "PPF Telecom Group",
+          "listed": false,
+          "source_type": "bond_report+regulator"
+        }
+      ],
+      "primary_peer": {
+        "id": "vivacom-bg",
+        "name": "Vivacom",
+        "parent": "United Group",
+        "phase": "phase2",
+        "note": "#1 in fixed. Yettel is likely #1 in mobile - CONFIRM which you mean"
+      }
+    },
+    {
+      "code": "MK",
+      "name": "North Macedonia",
+      "currency": "MKD",
+      "regulator": "AEK",
+      "regulator_url": "https://aek.mk",
+      "operators": [
+        {
+          "id": "a1-mk",
+          "name": "A1 Makedonija",
+          "is_us": true,
+          "parent": "A1 Telekom Austria Group",
+          "listed": false,
+          "source_type": "parent_ir"
+        },
+        {
+          "id": "mt-mk",
+          "name": "Makedonski Telekom",
+          "parent": "Deutsche Telekom (via Magyar Telekom)",
+          "listed": true,
+          "ticker": "TEL.MK",
+          "ticker_confidence": "low",
+          "source_type": "ir_pdf+regulator",
+          "note": "Listed on Macedonian SE. Almost certainly NOT in any commercial API - plan for PDF extraction."
+        }
+      ],
+      "primary_peer": {
+        "id": "mt-mk",
+        "name": "Makedonski Telekom",
+        "parent": "Deutsche Telekom",
+        "phase": "phase1",
+        "note": "#1 in fixed; A1 is #1 in mobile. Separately listed on Macedonian SE"
+      }
+    },
+    {
+      "code": "BY",
+      "name": "Belarus",
+      "currency": "BYN",
+      "regulator": "BelGIE",
+      "operators": [
+        {
+          "id": "a1-by",
+          "name": "A1 Belarus",
+          "is_us": true,
+          "parent": "A1 Telekom Austria Group",
+          "listed": false,
+          "source_type": "parent_ir"
+        },
+        {
+          "id": "mts-by",
+          "name": "MTS Belarus",
+          "parent": "MTS / state",
+          "listed": false,
+          "source_type": "none",
+          "note": "No usable public disclosure expected."
+        }
+      ],
+      "primary_peer": {
+        "id": "mts-by",
+        "name": "MTS Belarus",
+        "parent": "MTS / state",
+        "phase": "phase2",
+        "note": "market #1; realistically no usable disclosure"
+      }
+    }
+  ],
+  "phases": {
+    "phase1": [
+      "AT",
+      "HR",
+      "MK"
+    ],
+    "phase2": [
+      "BG",
+      "SI",
+      "RS",
+      "BY"
+    ]
+  }
+}

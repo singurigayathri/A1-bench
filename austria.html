@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Austria — A1 vs competitors</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ground:#eef1f4;--card:#fff;--ink:#12161b;--ink2:#5c666f;--ink3:#8b959d;--rule:#dde2e7;
+ --a1:#146c8f;--mag:#c2416b;--drei:#8b959d;--warn:#b5432c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:"IBM Plex Sans",system-ui,sans-serif;
+ font-size:14px;line-height:1.55;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1000px;margin:0 auto;padding:32px 24px 64px}
+h1{font-size:24px;font-weight:600;margin:0;letter-spacing:-.01em}
+.sub{color:var(--ink2);margin:5px 0 0;max-width:64ch}
+.card{background:var(--card);border:1px solid var(--rule);border-radius:10px;margin-top:20px;padding:20px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+.tab{font:inherit;font-size:13px;padding:7px 14px;border:1px solid var(--rule);background:transparent;
+ border-radius:20px;cursor:pointer;color:var(--ink2)}
+.tab[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#fff;font-weight:500}
+.tab:focus-visible{outline:2px solid var(--a1);outline-offset:2px}
+.lfl{display:flex;align-items:center;gap:10px;margin:16px 0 0;padding:12px 14px;background:#eef4f7;
+ border-radius:8px;font-size:13px}
+.lfl input{width:17px;height:17px;accent-color:var(--a1);cursor:pointer;flex:none}
+.lfl label{cursor:pointer;color:#0d4a63}
+.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:12.5px;color:var(--ink2);margin:16px 0 10px}
+.sw{display:inline-block;width:11px;height:11px;border-radius:3px;vertical-align:-1px;margin-right:6px}
+.chartbox{position:relative;width:100%;height:330px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:20px}
+.stat{background:#f4f6f8;border-radius:8px;padding:14px}
+.stat .k{font-size:12px;color:var(--ink2)}
+.stat .v{font-size:23px;font-weight:600;margin-top:3px;letter-spacing:-.01em}
+.stat .d{font-size:12px;color:var(--ink3);margin-top:2px}
+h2{font-size:15px;font-weight:600;margin:0 0 8px}
+.warn{border-left:3px solid var(--warn);background:#fbf0ed;padding:12px 14px;color:#6d2a1b;font-size:13px;
+ border-radius:0;margin-top:16px}
+ul{margin:8px 0 0;padding-left:20px}li{margin:5px 0}
+table{border-collapse:collapse;width:100%;font-size:13px;margin-top:6px}
+th,td{text-align:right;padding:8px 10px;border-bottom:1px solid var(--rule)}
+th{color:var(--ink2);font-weight:500}
+td:first-child,th:first-child{text-align:left}
+.gap{color:var(--warn);font-style:italic}
+footer{color:var(--ink3);font-size:12.5px;margin-top:26px;max-width:78ch}
+@media(max-width:620px){.wrap{padding:20px 12px 48px}h1{font-size:20px}.chartbox{height:280px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Austria — A1 against the market</h1>
+<p class="sub">Reported figures from A1 Group and Deutsche Telekom published reports. Drei publishes nothing comparable.</p>
+
+<div class="card">
+  <div class="tabs" role="group" aria-label="Choose metric">
+    <button class="tab" data-m="rev" aria-pressed="true">Revenue</button>
+    <button class="tab" data-m="growth" aria-pressed="false">Revenue growth</button>
+    <button class="tab" data-m="margin" aria-pressed="false">EBITDAaL margin</button>
+  </div>
+
+  <div class="lfl">
+    <input type="checkbox" id="lfl">
+    <label for="lfl">Put A1 on a like-for-like basis — add back restructuring, exclude low-margin international transit</label>
+  </div>
+
+  <div class="legend">
+    <span><span class="sw" style="background:#146c8f"></span>A1 Austria</span>
+    <span><span class="sw" style="background:#c2416b"></span>Magenta (DT Austria)</span>
+    <span><span class="sw" style="background:#8b959d"></span>Drei — no data published</span>
+  </div>
+
+  <div class="chartbox">
+    <canvas id="c" role="img" aria-label="Comparison of A1 Austria and Magenta Telekom on the selected metric">A1 Austria FY2025 revenue 2,745 million euro, EBITDAaL margin 27.5 percent. Magenta FY2024 revenue 1,500 million euro. Drei publishes no comparable data.</canvas>
+  </div>
+
+  <div class="cards" id="stats"></div>
+</div>
+
+<div class="card">
+  <h2>What is actually comparable</h2>
+  <table>
+    <thead><tr><th>Operator</th><th>Revenue</th><th>EBITDAaL</th><th>Subscribers</th><th>Churn</th><th>Frequency</th></tr></thead>
+    <tbody>
+      <tr><td>A1 Austria</td><td>yes</td><td>yes</td><td>yes</td><td>yes</td><td>quarterly</td></tr>
+      <tr><td>Magenta</td><td>yes</td><td>adjusted only</td><td class="gap">group only</td><td class="gap">no</td><td>quarterly</td></tr>
+      <tr><td>Drei</td><td class="gap">Firmenbuch</td><td class="gap">no</td><td class="gap">no</td><td class="gap">no</td><td>annual, lagged</td></tr>
+    </tbody>
+  </table>
+  <div class="warn">
+    Two bases differ and the gap is large enough to matter. Deutsche Telekom reports <strong>adjusted</strong> EBITDA AL, which strips special factors; A1's segment EBITDAaL carries EUR 96 mn of Austrian restructuring in 2025. A1's Austrian revenue also includes roughly EUR 155 mn of low-margin international transit that Magenta does not carry. The like-for-like toggle corrects both. Magenta's 2025 figure is nine months, not a full year — the margin is comparable, the absolute revenue is not.
+  </div>
+</div>
+
+<div class="card">
+  <h2>Filling the Drei gap</h2>
+  <ul>
+    <li>Hutchison Drei Austria files annual accounts in the Austrian Firmenbuch — revenue, operating result and headcount, under UGB rather than IFRS, with up to a year's lag.</li>
+    <li>RTR publishes subscriber counts and market shares for all three operators from one consistent source. This is the only genuinely like-for-like operational data in the market.</li>
+    <li>CK Hutchison's group reporting covers its European telecoms division; Austria is not consistently broken out.</li>
+  </ul>
+</div>
+
+<footer id="foot"></footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const D = {
+  a1:{
+    label:"A1 Austria", colour:"#146c8f",
+    periods:["FY2024","FY2025"],
+    rev:[2807,2745], revLfl:[2657,2590],
+    growth:[null,-2.2], growthLfl:[null,-2.5],
+    ebitdaal:[811,754], ebitdaalLfl:[900,850]
+  },
+  mag:{
+    label:"Magenta", colour:"#c2416b",
+    periods:["FY2024","9M2025"],
+    rev:[1500,1100],
+    growth:[2.5,1.7],
+    ebitdaal:[null,433]
+  }
+};
+const round=(v,d=1)=>v===null||v===undefined?null:Number(v.toFixed(d));
+const margin=(e,r)=>e===null||r===null?null:round(e/r*100,1);
+
+let metric="rev", lfl=false, chart=null;
+
+function series(){
+  const aRev = lfl ? D.a1.revLfl : D.a1.rev;
+  const aEb  = lfl ? D.a1.ebitdaalLfl : D.a1.ebitdaal;
+  const aGr  = lfl ? D.a1.growthLfl : D.a1.growth;
+  if(metric==="rev")    return {a:aRev.map(v=>round(v,0)), m:D.mag.rev, unit:"EUR mn", d:0};
+  if(metric==="growth") return {a:aGr, m:D.mag.growth, unit:"% YoY", d:1};
+  return {a:aRev.map((r,i)=>margin(aEb[i],r)), m:D.mag.rev.map((r,i)=>margin(D.mag.ebitdaal[i],r)), unit:"%", d:1};
+}
+
+function draw(){
+  const s=series();
+  const labels=["2024","2025"];
+  const data={labels,datasets:[
+    {label:"A1 Austria",data:s.a,backgroundColor:"#146c8f",borderColor:"#146c8f",borderRadius:4,barThickness:38},
+    {label:"Magenta",data:s.m,backgroundColor:"#c2416b",borderColor:"#c2416b",borderRadius:4,barThickness:38},
+    {label:"Drei",data:[null,null],backgroundColor:"#8b959d",borderRadius:4,barThickness:38}
+  ]};
+  if(chart) chart.destroy();
+  chart=new Chart(document.getElementById("c"),{
+    type:"bar", data,
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},
+        tooltip:{callbacks:{label:ctx=>{
+          if(ctx.raw===null) return ctx.dataset.label+": not published";
+          const suffix = metric==="rev" ? " EUR mn" : "%";
+          const per = ctx.dataset.label==="Magenta" && ctx.dataIndex===1 ? " (9 months)" : "";
+          return ctx.dataset.label+": "+ctx.raw.toFixed(s.d)+suffix+per;
+        }}}},
+      scales:{
+        y:{title:{display:true,text:s.unit,color:"#898781",font:{size:12}},
+           ticks:{color:"#898781"},grid:{color:"rgba(137,135,129,.18)"},
+           beginAtZero:metric!=="growth"},
+        x:{ticks:{color:"#898781"},grid:{display:false}}
+      }}});
+  stats(s);
+}
+
+function stats(s){
+  const aEb = lfl ? D.a1.ebitdaalLfl : D.a1.ebitdaal;
+  const aRev = lfl ? D.a1.revLfl : D.a1.rev;
+  const aM = margin(aEb[1],aRev[1]);
+  const mM = margin(D.mag.ebitdaal[1], D.mag.rev[1]);
+  const gap = aM===null||mM===null ? null : round(aM-mM,1);
+  document.getElementById("stats").innerHTML=`
+   <div class="stat"><div class="k">A1 margin 2025</div><div class="v">${aM.toFixed(1)}%</div>
+     <div class="d">${lfl?"like-for-like":"as reported"}</div></div>
+   <div class="stat"><div class="k">Magenta margin</div><div class="v">${mM.toFixed(1)}%</div>
+     <div class="d">9M 2025, adjusted</div></div>
+   <div class="stat"><div class="k">Gap to Magenta</div><div class="v">${gap>0?"+":""}${gap.toFixed(1)} pp</div>
+     <div class="d">${gap<0?"A1 behind":"A1 ahead"}</div></div>
+   <div class="stat"><div class="k">Drei</div><div class="v">—</div><div class="d">nothing published</div></div>`;
+}
+
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{
+  metric=b.dataset.m;
+  document.querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
+  draw();
+});
+document.getElementById("lfl").onchange=e=>{lfl=e.target.checked;draw();};
+document.getElementById("foot").textContent =
+ "Sources: A1 Group Annual Financial Report 2025 (segment Austria, pages 12-14) and Deutsche Telekom interim and annual reports, Europe segment, Austria. Drei figures would come from Firmenbuch filings and RTR.";
+draw();
+</script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+{
+  "_note": "This is the file that makes the dashboard defensible. Every metric has YOUR definition. When you enter a peer figure, record whether their reported definition matches yours in the data file's basis column.",
+  "metrics": [
+    {
+      "id": "service_revenue_growth",
+      "label": "Service revenue growth",
+      "unit": "pct_yoy",
+      "higher_is_better": true,
+      "definition": "Year-on-year change in service revenue (mobile + fixed service revenue, excluding equipment sales and excluding interconnect).",
+      "why": "The metric equity analysts anchor on. Total revenue is distorted by handset sales volumes, which carry almost no margin.",
+      "watch_out": "Some operators report growth including handsets. Some report organic (FX-neutral), some reported. Record which."
+    },
+    {
+      "id": "ebitdaal_margin",
+      "label": "EBITDAaL margin",
+      "unit": "pct",
+      "higher_is_better": true,
+      "definition": "EBITDA after leases divided by total revenue.",
+      "why": "A1 spun off its tower business in September 2023, so tower costs now sit in lease expense. Peers that still own towers keep them below EBITDA. Raw EBITDA margin is not comparable across the two structures; EBITDAaL is.",
+      "watch_out": "If a peer only publishes EBITDA, you must find their lease expense to convert. Flag any figure you could not convert."
+    },
+    {
+      "id": "ebitdaal_growth",
+      "label": "EBITDAaL growth",
+      "unit": "pct_yoy",
+      "higher_is_better": true,
+      "definition": "Year-on-year change in EBITDA after leases.",
+      "why": "Margin level reflects history; growth reflects current execution.",
+      "watch_out": "One-off restructuring charges swing this badly. Note them."
+    },
+    {
+      "id": "capex_intensity",
+      "label": "Capex intensity",
+      "unit": "pct",
+      "higher_is_better": false,
+      "definition": "Capex excluding spectrum, divided by total revenue.",
+      "why": "Telco's single largest discretionary cost. Sustained 3-4pp above peers means either a network catch-up or poor capital discipline.",
+      "watch_out": "Spectrum payments are lumpy and must be excluded or they destroy the comparison. Some operators net off tower/fibre co-investment."
+    },
+    {
+      "id": "opfcf_margin",
+      "label": "EBITDAaL less capex margin",
+      "unit": "pct",
+      "higher_is_better": true,
+      "definition": "(EBITDAaL minus capex ex-spectrum) divided by total revenue.",
+      "why": "The cleanest single measure of operating cash generation, and it neutralises the trade-off between margin and investment.",
+      "watch_out": "None major. This is the most robust cross-operator metric on the list."
+    },
+    {
+      "id": "net_debt_ebitda",
+      "label": "Net debt / EBITDA",
+      "unit": "x",
+      "higher_is_better": false,
+      "definition": "Net debt divided by last twelve months EBITDAaL.",
+      "why": "Determines who can afford to buy spectrum, build fibre, or acquire. A leveraged peer is a constrained peer.",
+      "watch_out": "Group-level only for most peers. Not meaningful per market. Show at group level and say so.",
+      "group_level_only": true
+    },
+    {
+      "id": "arpu_mobile",
+      "label": "Mobile ARPU (ex-M2M)",
+      "unit": "eur_month",
+      "higher_is_better": true,
+      "definition": "Mobile service revenue divided by average mobile subscribers, EXCLUDING M2M/IoT SIMs, monthly, converted to EUR.",
+      "why": "The core pricing-power indicator.",
+      "watch_out": "A1 STOPPED DISCLOSING segment-level ARPU and the mobile/fixed service revenue split from FY2025, citing competition sensitivity. Only a group-level ARPU including M2M remains (EUR 7.5 in 2025, down 6.5% - but that fall is M2M dilution, not pricing). This metric is not obtainable per market from A1's own reports. Regulator data or a proxy is the only route.",
+      "status": "not_disclosed_by_a1_from_fy2025"
+    },
+    {
+      "id": "churn_mobile",
+      "label": "Mobile postpaid churn",
+      "unit": "pct_month",
+      "higher_is_better": false,
+      "definition": "Monthly postpaid disconnections divided by average postpaid base.",
+      "why": "Leading indicator. Churn moves before revenue does.",
+      "watch_out": "Monthly vs annualised. Postpaid vs blended. Whether in-base migrations count as churn."
+    },
+    {
+      "id": "convergence_rate",
+      "label": "Convergence rate",
+      "unit": "pct",
+      "higher_is_better": true,
+      "definition": "Share of households or customers taking both fixed and mobile from the operator.",
+      "why": "Converged customers churn materially less. This is a structural competitive position, not a quarterly number.",
+      "watch_out": "Denominator differs - households vs customers vs fixed base. Mobile-only operators score zero by definition; exclude them rather than showing a false gap."
+    },
+    {
+      "id": "ftth_takeup",
+      "label": "FTTH take-up rate",
+      "unit": "pct",
+      "higher_is_better": true,
+      "definition": "FTTH customers divided by FTTH homes passed.",
+      "why": "Tests whether fibre capex is converting into revenue. Homes passed alone tells you nothing.",
+      "watch_out": "Homes passed definitions vary widely (marketable vs technically reachable)."
+    },
+    {
+      "id": "market_share_mobile",
+      "label": "Mobile market share",
+      "unit": "pct",
+      "higher_is_better": true,
+      "definition": "Share of mobile subscribers in the market, excluding M2M.",
+      "why": "Regulator-sourced, so it is the one metric that is genuinely comparable across all operators including private ones.",
+      "watch_out": "Use the national regulator as the single source for all operators in a market. Do not mix operator-reported and regulator figures."
+    },
+    {
+      "id": "b2b_revenue_share",
+      "label": "B2B / ICT revenue share",
+      "unit": "pct",
+      "higher_is_better": true,
+      "definition": "Business and ICT services revenue divided by total revenue.",
+      "why": "The growth vector where telcos still differentiate, and the one most relevant to an IT services strategy.",
+      "watch_out": "Segment definitions are inconsistent. Some include wholesale, some include SoHo in consumer."
+    }
+  ]
+}
